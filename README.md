@@ -25,4 +25,4 @@
 
 ### Day 4 (22/11/2022)
 - Implement websockets for pubsub and produmer
-- Implement neo4j database in both apis (will be done later as there is no specific request on the given README.md file)
+- Implement neo4j database in both apis (will be done later as there is no specific request on the given README.md file) / Data Store implementation left. 
