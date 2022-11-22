@@ -1,0 +1,99 @@
+version: "3.3"
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.7.0
+    ports:
+      - 2181:2181
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    # volumes:
+    #   - ./.volumesdata/zookeeper:/bitnami/zookeeper
+    #   - ./.volumesdata/zookeeper/config:/bitnami/zookeeper/config
+    #   - ./.volumesdata/zookeeper/data:/bitnami/zookeeper/data
+  
+  kafka:
+    image: bitnami/kafka:2.8.0
+    ports:
+      - 9093:9093
+    expose:
+      - 9093
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CREATE_TOPICS="kafka_capstone_event_bus:1:1"
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    # volumes:
+    #   - ./volumesdata/kafka:/bitnami/kafka
+    #   - ./volumesdata/kafka/config:/bitnami/kafka/config
+    #   - ./volumesdata/kafka/data:/bitnami/kafka/data
+    depends_on:
+      - zookeeper
+    
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    ports:
+     - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka
+  
+  db:
+    image: neo4j:latest
+    restart: always
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      NEO4J_AUTH: neo4j/streams
+      NEO4J_dbms_logs_debug_level: DEBUG
+      # KAFKA related configuration
+      NEO4J_kafka_zookeeper_connect: zookeeper:2181
+      NEO4J_kafka_bootstrap_servers: kafka:9093
+    depends_on:
+      - kafka
+  
+  producer:
+    build:
+      context: .
+      dockerfile: producer.Dockerfile
+    restart: on-failure
+    volumes:
+      - ./producer.py:/app/producer.py
+    depends_on:
+      - kafka
+
+  consumer:
+    build:
+      context: .
+      dockerfile: consumer.Dockerfile
+    restart: on-failure
+    volumes:
+      - ./consumer.py:/app/consumer.py
+    depends_on:
+      - producer
+
+  produmer_app:
+    build:
+      context: ./produmer_app
+      dockerfile: Dockerfile
+    restart: on-failure
+    volumes:
+      - ./app.py:/app/app.py
+    depends_on:
+      - kafka
+      - producer
+      - consumer
+
+  pubsub_app:
+    build: 
+      context: ./produmer_app
+      dockerfile: Dockerfile
