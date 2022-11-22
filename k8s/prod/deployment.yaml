@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment
+  namespace: prod
+
+spec:
+  minReplicas: 3
+  maxReplicas: 15
+  selector:
+    matchLabels:
+      app: prod-deployment
+  template:
+    metadata:
+      labels:
+        app: prod-deployment
+
+    spec:
+      containers:
+        - name: prod-deployment-container
+          image: gcr.io/gpt-j-and-gpt-neox20b/bank
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+              protocol: TCP

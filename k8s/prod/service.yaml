@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Service
+metadata: 
+  name: prod-deployment-service
+  labels:
+    name: prod-deployment
+    app: prod-deployment
+    namespace: prod
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 5000
+      protocol: TCP
+  selector:
+    name: deploy-pod
+    app: prod-deployment
