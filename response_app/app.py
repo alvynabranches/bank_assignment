@@ -6,6 +6,8 @@ from fastapi import FastAPI
 from logging import getLogger
 from kafka import KafkaConsumer
 
+from config import ANNUAL_INC_COL
+
 container = os.environ.get("CONTAINER", None) == "true"
 
 if container:
@@ -15,11 +17,10 @@ if container:
 
 consumer = KafkaConsumer("messages", bootstrap_servers=["kafka:9093" if container else "localhost:9093"], auto_offset_reset="earliest")
 logger = getLogger(__name__)
-risk_score_col_name = "risk_score"
+df = pd.DataFrame()
 
 if __name__ == "__main__":
     try:
-        df = pd.DataFrame()
         for message in consumer:
             _temp = pd.DataFrame(message.value)
             df = pd.concat([df, _temp], axis=0)

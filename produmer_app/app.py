@@ -101,7 +101,7 @@ class Data(BaseModel):
     mort_acc: float
     mths_sinc_recent_bc: float
     mths_since_recent_bc_dlq: Optional[float] = None
-    mths__since_recent_inq: Optional[float] = None
+    mths_since_recent_inq: Optional[float] = None
     mths_since_recent_revol_delinq: Optional[float] = None
     num_accts_ever_120_pd: Optional[float] = 0.0
     num_actv_bc_tl: float
@@ -115,7 +115,7 @@ class Data(BaseModel):
     num_sats: float
     num_tl_120dpd_2m: Optional[float | None] = 0.0
     num_tl_30dpd: Optional[float] = 0.0
-    num_tl_90g_dpd_24m = Optional[float] = 0.0
+    num_tl_90g_dpd_24m: Optional[float] = 0.0
     nu_tl_op_past_12m: float
     pct_tl_nvr_dlq: float
     percent_bc_gt_75: float
