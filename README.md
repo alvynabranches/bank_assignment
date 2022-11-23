@@ -23,6 +23,8 @@
 - Implement nginx
 - Search for graph base database to store the data
 
-### Day 4 (22/11/2022)
+21/11/2022 & 22/11/2022 was not feeling well
+
+### Day 4 (23/11/2022)
 - Implement websockets for pubsub and produmer
 - Implement neo4j database in both apis (will be done later as there is no specific request on the given README.md file) / Data Store implementation left. 
