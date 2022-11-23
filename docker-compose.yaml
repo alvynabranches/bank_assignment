@@ -50,6 +50,8 @@ services:
     restart: always
     ports:
       - 3306:3306
+    volumes:
+      - .volumesdata/db:/var/lib/mysql:rw
   
   producer:
     build:
@@ -71,22 +73,12 @@ services:
     depends_on:
       - producer
 
-  produmer_app:
+  app:
     build:
-      context: ./produmer_app
+      context: ./app
       dockerfile: Dockerfile
     restart: on-failure
     volumes:
       - ./app.py:/app/app.py
-    depends_on:
-      - kafka
-      - producer
-      - consumer
-
-  pubsub_app:
-    build: 
-      context: ./produmer_app
-      dockerfile: Dockerfile
-    restart: on-failure
     depends_on:
       - kafka
