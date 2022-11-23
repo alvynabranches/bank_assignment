@@ -47,7 +47,7 @@ services:
       - kafka
   
   db:
-    image: mysql:latest
+    image: mysql:8.0.31
     restart: always
     ports:
       - 3306:3306
