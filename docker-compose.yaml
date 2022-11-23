@@ -46,20 +46,11 @@ services:
     depends_on:
       - kafka
   
-  # db:
-  #   image: neo4j:latest
-  #   restart: always
-  #   ports:
-  #     - 7474:7474
-  #     - 7687:7687
-  #   environment:
-  #     NEO4J_AUTH: neo4j/streams
-  #     NEO4J_dbms_logs_debug_level: DEBUG
-  #     # KAFKA related configuration
-  #     NEO4J_kafka_zookeeper_connect: zookeeper:2181
-  #     NEO4J_kafka_bootstrap_servers: kafka:9093
-  #   depends_on:
-  #     - kafka
+  db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 3306:3306
   
   producer:
     build:
