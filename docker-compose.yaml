@@ -37,7 +37,6 @@ services:
 
   kafdrop:
     image: obsidiandynamics/kafdrop
-    container_name: kafdrop
     ports:
      - 9000:9000
     environment:
@@ -88,3 +87,6 @@ services:
     build: 
       context: ./produmer_app
       dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      - kafka
