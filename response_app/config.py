@@ -1,1 +1,0 @@
-ANNUAL_INC_COL = "annual_inc"

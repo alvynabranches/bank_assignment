@@ -31,11 +31,6 @@ def serializer(message: str):
 
 container = os.environ.get("CONTAINER", None) == "true"
 
-if container:
-    for i in range(n:=60*3):
-        sleep(1)
-        print(n-i+1, end="\r")
-
 producer = KafkaProducer(bootstrap_servers=["kafka:9093" if container else "localhost:9093"], value_serializer=serializer)
 logger = getLogger(__name__)
 
