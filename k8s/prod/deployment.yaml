@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: prod-deployment-container
-          image: gcr.io/gpt-j-and-gpt-neox20b/bank
+          image: gcr.io/alvyn-kubernetes/bank
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
