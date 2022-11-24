@@ -5,7 +5,7 @@ metadata:
   namespace: prod
 
 spec:
-  minReplicas: 3
+  minReplicas: 1
   maxReplicas: 15
   selector:
     matchLabels:
@@ -17,9 +17,33 @@ spec:
 
     spec:
       containers:
-        - name: prod-deployment-container
-          image: gcr.io/alvyn-kubernetes/bank
+        - name: prod-deployment-app
+          image: gcr.io/alvyn-kubernetes/bank:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
               protocol: TCP
+        
+        - name: prod-deployment-zookeeper
+          image: bitnami/zookeeper:3.7.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 2181
+              protocol: TCP
+        
+        - name: prod-deployment-kafka
+          image: bitnami/kafka:2.8.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9093
+              portocol: TCP
+        
+        - name: prod-deployment-kafdrop
+          image: obsidiandynamics/kafdrop
+          ports:
+            - containerPort: 9000
+
+        - name: prod-deployment-db
+          image: mysql:8.0.31
+          ports:
+            - containerPort: 3306
