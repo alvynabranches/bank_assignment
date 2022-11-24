@@ -3,6 +3,12 @@
 Problem Statement Mistakes 
 - In the mentioned (dataset)[https://www.kaggle.com/wordsforthewise/lending-club], there is no column risk_score hence moving average is taken of annual_inc
 
+Problem Statement Solution
+1. 6ea6a86
+2. 
+3. 
+4. 
+
 ### Day 1 (17/11/2022)
 - Searching image for kafka and zookeeper
 - Implement the producer - consumer (produmer) python code
@@ -36,6 +42,10 @@ Problem Statement Mistakes
 - Run the terraform code on GCP
 - Debug and fix the terraform code
 
+### Day 5 (25/11/2022)
+- 
+
 ### To Do List
 - Implement websockets for pubsub and produmer
 - Implement neo4j / mysql database in both apis. 
+- Finalize kubenetes code
