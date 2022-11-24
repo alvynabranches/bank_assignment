@@ -131,3 +131,6 @@ dmypy.json
 # Terraform files
 *.hcl
 *.tfstate*
+
+# Docker Volume Data
+.volumesdata
