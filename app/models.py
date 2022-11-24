@@ -153,4 +153,5 @@ transactions = Table(
     Column("settlement_amount", Float),
     Column("settlement_percentage", Float),
     Column("settlement_term", Float),
+    Column("annual_inc_MA50", Float)
 )

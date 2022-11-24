@@ -1,12 +1,17 @@
+import json
+import config
+import asyncio
+import pandas as pd
+from db import conn
 from enum import Enum
 from typing import Optional
-from fastapi import FastAPI
+from fastapi.routing import APIRouter
+from fastapi import FastAPI, BackgroundTasks
 from datetime import datetime
 from pydantic import BaseModel
-from fastapi.responses import JSONResponse
 from models import transactions
-import aiokafka
-import config
+from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
+from fastapi.responses import JSONResponse
 
 class ApplicationType(Enum):
     individual = "Individual"
@@ -167,15 +172,37 @@ class Data(BaseModel):
 app = FastAPI()
 
 @app.get("/")
-def index():
+async def index():
     return JSONResponse({"status": "success"}, 200)
 
 @app.post("/transaction")
-def transaction(body: Data):
-    producer = aiokafka.AIOKafkaProducer(loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
-    
-    return JSONResponse({}, 201)
+async def transaction(message: Data, background: BackgroundTasks):
+    producer = AIOKafkaProducer(loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
+    await producer.start()
+    try:
+        json_value = json.dumps(message.__dict__).encode("utf-8")
+        response = await producer.send_and_wait(topic=config.KAFKA_TOPIC, value=json_value)
+        conn.execute(transactions.insert(json_value.__dict__))
+    finally:
+        await producer.stop()
+    return JSONResponse({"response": response}, 201)
 
-@app.get("/transaction")
-def transaction(body: Data):
+async def transaction():
+    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loog, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
+    await consumer.start()
+    df = pd.DataFrame()
+    async for msg in consumer:
+        df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
     return JSONResponse({}, 200)
+
+async def consume():
+    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loog, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS, auto_offset_reset="latest")
+    await consumer.start()
+    df = pd.DataFrame()
+    async for msg in consumer:
+        df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
+        MA50 = df[config.ANNUAL_INC_COL].rolling(50).mean().tolist()[-1]
+        conn.execute(transactions.insert().values(**msg, annual_inc_MA50=MA50))
+    return 
+
+asyncio.create_task(consume())
