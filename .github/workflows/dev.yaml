@@ -57,23 +57,27 @@ jobs:
     - name: Configure Docker
       run: |
         gcloud --quiet auth configure-docker
+    
     - name: Configure Kubernetes to New Version
       run: |
         gcloud components install gke-gcloud-auth-plugin
+    
     - name: Get GKE Credentials
       run: |
         gcloud container clusters get-credentials "$GKE_CLUSTER" --project "$GKE_PROJECT" --zone "$GKE_ZONE"
+    
     - name: Build Docker Image
       run: |
-        docker build --tag "gcr.io/$GKE_PROJECT/$IMAGE:$TAG" .
+        docker build --tag "gcr.io/$GKE_PROJECT/$IMAGE:$TAG" ./app/.
+    
     - name: Publish GCR
       run: |
         docker push "gcr.io/$GKE_PROJECT/$IMAGE:$TAG"
+    
     - name: Publish GKE
       run: |
-        # kubectl apply -f "k8s/$ENV/app-pod.yaml"
-        # kubectl apply -f "k8s/$ENV/app-service.yaml"
         kubectl apply -f "k8s/$ENV/deployment.yaml"
+    
     - name: Slack Notification
       uses: act10ns/slack@v1
       with:
