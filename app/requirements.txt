@@ -4,3 +4,4 @@ pymysql
 uvicorn
 aiokafka
 pandas
+cryptography

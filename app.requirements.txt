@@ -1,6 +1,0 @@
-fastapi
-sqlalchemy
-pymysql
-uvicorn
-kafka-python
-aiokafka
