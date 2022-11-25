@@ -3,9 +3,9 @@
 Problem Statement Mistakes 
 - In the mentioned (dataset)[https://www.kaggle.com/wordsforthewise/lending-club], there is no column risk_score hence moving average is taken of annual_inc
 
-Problem Statement Solution
+Problem Statement Solution (commits are done on main branch)
 1. 6ea6a86
-2. 
+2. 6ea6a86
 3. 
 4. 
 
