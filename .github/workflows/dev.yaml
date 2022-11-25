@@ -76,7 +76,11 @@ jobs:
     
     - name: Publish GKE
       run: |
+        kubectl apply -f "k8s/$ENV/namespace.yaml"
+        kubectl apply -f "k8s/$ENV/configmap.yaml"
+        kubectl apply -f "k8s/$ENV/secret.yaml"
         kubectl apply -f "k8s/$ENV/deployment.yaml"
+        kubectl apply -f "k8s/$ENV/service.yaml"
     
     - name: Slack Notification
       uses: act10ns/slack@v1
