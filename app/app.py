@@ -9,8 +9,6 @@ from models import transactions
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from fastapi.responses import JSONResponse
 
-
-
 app = FastAPI()
 
 @app.get("/")
