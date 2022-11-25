@@ -53,5 +53,6 @@ Problem Statement Solution (commits are done on main branch)
 - Implement websockets
 - Implement neo4j / mysql database in both apis. 
 - Finalize kubenetes code
+- Implement GraphQL service
 - Implement security elements
 - Implement monitoring services
