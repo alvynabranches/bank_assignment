@@ -5,8 +5,7 @@ import pandas as pd
 from db import conn
 from enum import Enum
 from typing import Optional
-from fastapi.routing import APIRouter
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
 from datetime import datetime
 from pydantic import BaseModel
 from models import transactions
@@ -176,7 +175,7 @@ async def index():
     return JSONResponse({"status": "success"}, 200)
 
 @app.post("/transaction")
-async def transaction(message: Data, background: BackgroundTasks):
+async def transaction(message: Data):
     producer = AIOKafkaProducer(loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
     try:
         await producer.start()
@@ -186,17 +185,6 @@ async def transaction(message: Data, background: BackgroundTasks):
     finally:
         await producer.stop()
     return JSONResponse({"response": response}, 201)
-
-async def transaction():
-    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
-    df = pd.DataFrame()
-    try:
-        await consumer.start()
-        async for msg in consumer:
-            df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
-    finally:
-        await consumer.stop()
-    return JSONResponse({}, 200)
 
 async def consume():
     consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS, auto_offset_reset="latest")
@@ -213,6 +201,5 @@ async def consume():
             ))
     finally:
         await consumer.stop()
-    return 
 
 asyncio.create_task(consume())
