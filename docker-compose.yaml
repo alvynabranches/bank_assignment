@@ -50,10 +50,9 @@ services:
     restart: always
     ports:
       - 3306:3306
+      - 33060:33060
     environment:
-      - MYSQL_USER=alvyn
-      # - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_PASSWORD=alvyn
+      - MYSQL_ROOT_PASSWORD=alvyn
       - MYSQL_DATABASE=transaction_db
     volumes:
       - .volumesdata/db:/var/lib/mysql:rw
@@ -66,7 +65,7 @@ services:
     ports:
       - 5000:5000
     environment:
-      - MYSQL_USER=alvyn
+      - MYSQL_USERNAME=root
       - MYSQL_PASSWORD=alvyn
       - MYSQL_DATABASE=transaction_db
       - DATABASE_URL=db
