@@ -52,6 +52,6 @@ Problem Statement Solution (commits are done on main branch)
 - Fix the bugs on GKE
 
 ### To Do List
-- Implement websockets for pubsub and produmer
+- Implement websockets
 - Implement neo4j / mysql database in both apis. 
 - Finalize kubenetes code
