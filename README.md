@@ -43,7 +43,13 @@ Problem Statement Solution (commits are done on main branch)
 - Debug and fix the terraform code
 
 ### Day 5 (25/11/2022)
-- 
+- Create final k8s code
+- Create code for all problem statements
+- Debug and fix the code
+
+### Day 6 (26/11/2022)
+- Check for problem by deploying on GKE
+- Fix the bugs on GKE
 
 ### To Do List
 - Implement websockets for pubsub and produmer
