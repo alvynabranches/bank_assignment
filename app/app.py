@@ -201,7 +201,7 @@ async def consume():
     df = pd.DataFrame()
     async for msg in consumer:
         df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
-        MA50 = df[config.ANNUAL_INC_COL].rolling(50).mean().tolist()[-1]
+        MA50 = df[config.ANNUAL_INC_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
         MA100 = df[config.ANNUAL_INC_COL].rolling(100).mean().tolist()[-1]
         conn.execute(transactions.insert().values(
             **msg, 
