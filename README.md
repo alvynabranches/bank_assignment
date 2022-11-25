@@ -6,8 +6,8 @@ Problem Statement Mistakes
 Problem Statement Solution (commits are done on main branch)
 1. 6ea6a86
 2. 6ea6a86
-3. 
-4. 
+3. c2a0d8c
+4. 6b1f45d
 
 ### Day 1 (17/11/2022)
 - Searching image for kafka and zookeeper
