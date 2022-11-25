@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: staging-service-db
+  namespace: staging
+spec:
+  selector:
+    app: staging-app
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-service-app
+  namespace: staging
+spec:
+  selector:
+    app: staging-app
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30000
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-service-zookeeper
+  namespace: staging
+spec:
+  selector:
+    app: staging-app
+  ports:
+    - protocol: TCP
+      port: 2181
+      targetPort: 2181
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-service-kafka
+  namespace: staging
+spec:
+  selector:
+    app: staging-app
+  ports:
+    - protocol: TCP
+      port: 9093
+      targetPort: 9093
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-service-kafdrop
+  namespace: staging
+spec:
+  selector:
+    app: staging-app
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+---
