@@ -202,7 +202,11 @@ async def consume():
     async for msg in consumer:
         df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
         MA50 = df[config.ANNUAL_INC_COL].rolling(50).mean().tolist()[-1]
-        conn.execute(transactions.insert().values(**msg, annual_inc_MA50=MA50))
+        MA100 = df[config.ANNUAL_INC_COL].rolling(100).mean().tolist()[-1]
+        conn.execute(transactions.insert().values(
+            **msg, 
+            **{f"{config.ANNUAL_INC_COL}_MA50": MA50, f"{config.ANNUAL_INC_COL}_MA100": MA100}
+        ))
     return 
 
 asyncio.create_task(consume())
