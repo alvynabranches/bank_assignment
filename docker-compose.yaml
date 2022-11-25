@@ -51,36 +51,44 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=alvyn
       - MYSQL_DATABASE=transaction_db
     volumes:
       - .volumesdata/db:/var/lib/mysql:rw
   
-  producer:
-    build:
-      context: .
-      dockerfile: producer.Dockerfile
-    restart: on-failure
-    volumes:
-      - ./producer.py:/app/producer.py
-    depends_on:
-      - kafka
+  # producer:
+  #   build:
+  #     context: .
+  #     dockerfile: producer.Dockerfile
+  #   restart: on-failure
+  #   volumes:
+  #     - ./producer.py:/app/producer.py
+  #   depends_on:
+  #     - kafka
 
-  consumer:
-    build:
-      context: .
-      dockerfile: consumer.Dockerfile
-    restart: on-failure
-    volumes:
-      - ./consumer.py:/app/consumer.py
-    depends_on:
-      - producer
+  # consumer:
+  #   build:
+  #     context: .
+  #     dockerfile: consumer.Dockerfile
+  #   restart: on-failure
+  #   volumes:
+  #     - ./consumer.py:/app/consumer.py
+  #   depends_on:
+  #     - producer
 
   app:
     build:
       context: ./app
       dockerfile: Dockerfile
     restart: on-failure
+    ports:
+      - 5000:5000
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=alvyn
+      - MYSQL_DATABASE=transaction_db
+      - DATABASE_URL=db
     volumes:
       - ./app:/app
     depends_on:
