@@ -188,7 +188,7 @@ async def transaction(message: Data, background: BackgroundTasks):
     return JSONResponse({"response": response}, 201)
 
 async def transaction():
-    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loog, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
+    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
     await consumer.start()
     df = pd.DataFrame()
     async for msg in consumer:
@@ -196,7 +196,7 @@ async def transaction():
     return JSONResponse({}, 200)
 
 async def consume():
-    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loog, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS, auto_offset_reset="latest")
+    consumer = AIOKafkaConsumer(config.KAFKA_TOPIC, loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS, auto_offset_reset="latest")
     await consumer.start()
     df = pd.DataFrame()
     async for msg in consumer:
