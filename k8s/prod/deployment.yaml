@@ -1,20 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prod-deployment
+  name: prod-deployment-app
   namespace: prod
-
+  labels:
+    app: prod-app
 spec:
-  minReplicas: 1
-  maxReplicas: 15
+  replicas: 1
   selector:
     matchLabels:
-      app: prod-deployment
+      app: prod-app
   template:
     metadata:
       labels:
-        app: prod-deployment
-
+        app: prod-app
     spec:
       containers:
         - name: prod-deployment-app
@@ -23,27 +22,192 @@ spec:
           ports:
             - containerPort: 5000
               protocol: TCP
-        
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: mysql_username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: mysql_password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: MYSQL_DATABASE
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment-zookeeper
+  namespace: prod
+  labels:
+    app: prod-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prod-app
+  template:
+    metadata:
+      labels:
+        app: prod-app
+    spec:
+      containers:
         - name: prod-deployment-zookeeper
           image: bitnami/zookeeper:3.7.0
           imagePullPolicy: Always
           ports:
             - containerPort: 2181
               protocol: TCP
-        
+          env:
+            - name: ALLOW_ANONYMOUS_LOGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: ALLOW_ANONYMOUS_LOGIN
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment-kafka
+  namespace: prod
+  labels:
+    app: prod-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prod-app
+  template:
+    metadata:
+      labels:
+        app: prod-app
+    spec:
+      containers:
         - name: prod-deployment-kafka
           image: bitnami/kafka:2.8.0
           imagePullPolicy: Always
           ports:
             - containerPort: 9093
-              portocol: TCP
-        
+              protocol: TCP
+          env:
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_ZOOKEEPER_CONNECT
+            - name: KAFKA_CREATE_TOPICS
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_CREATE_TOPICS
+            - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+            - name: KAFKA_CFG_LISTENERS
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_CFG_LISTENERS
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_CFG_ADVERTISED_LISTENERS
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_INTER_BROKER_LISTENER_NAME
+            - name: ALLOW_PLAINTEXT_LISTENER
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: ALLOW_PLAINTEXT_LISTENER
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment-kafdrop
+  namespace: prod
+  labels:
+    app: prod-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prod-app
+  template:
+    metadata:
+      labels:
+        app: prod-app
+    spec:
+      containers:
         - name: prod-deployment-kafdrop
           image: obsidiandynamics/kafdrop
           ports:
             - containerPort: 9000
+              protocol: TCP
+          env:
+            - name: KAFKA_BROKERCONNECT
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: KAFKA_BROKERCONNECT
+            - name: JVM_OPTS
+              value: -Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify
+---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment-db
+  namespace: prod
+  labels:
+    app: prod-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prod-app
+  template:
+    metadata:
+      labels:
+        app: prod-app
+    spec:
+      containers:
         - name: prod-deployment-db
           image: mysql:8.0.31
           ports:
             - containerPort: 3306
+              protocol: TCP
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: mysql_username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: mysql_password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: prod-configmap
+                  key: MYSQL_DATABASE
