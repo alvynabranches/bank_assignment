@@ -6,7 +6,7 @@ services:
     ports:
       - 2181:2181
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ALLOW_ANONYMOUS_LOGIN: yes
     # volumes:
     #   - ./.volumesdata/zookeeper:/bitnami/zookeeper
     #   - ./.volumesdata/zookeeper/config:/bitnami/zookeeper/config
@@ -52,8 +52,8 @@ services:
       - 3306:3306
       - 33060:33060
     environment:
-      - MYSQL_ROOT_PASSWORD=alvyn
-      - MYSQL_DATABASE=transaction_db
+      MYSQL_ROOT_PASSWORD: alvyn
+      MYSQL_DATABASE: transaction_db
     volumes:
       - .volumesdata/db:/var/lib/mysql:rw
 
@@ -65,10 +65,11 @@ services:
     ports:
       - 5000:5000
     environment:
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=alvyn
-      - MYSQL_DATABASE=transaction_db
-      - DATABASE_URL=db
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: alvyn
+      MYSQL_DATABASE: transaction_db
+      DATABASE_URL: db
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
     volumes:
       - ./app:/app
     depends_on:
