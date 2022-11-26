@@ -156,3 +156,13 @@ transactions = Table(
     Column("annual_inc_MA50", Float),
     Column("annual_inc_MA100", Float),
 )
+
+transactions_information = Table(
+    "transaction_information", meta,
+    Column("id", Integer, primarykey=True, autoincrement=True),
+    Column("transaction_id", Integer),
+    Column("client_ip", String(16)),
+    Column("client_host", String(16))
+)
+
+meta.create_all()
