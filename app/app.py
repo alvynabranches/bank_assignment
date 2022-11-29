@@ -26,7 +26,7 @@ async def index():
 
 @app.post("/transaction")
 async def transaction(message: Data, request: Request, background: BackgroundTasks):
-    client_ip, client_host = str(request.client.host), str(request.client.port)
+    client_host, client_port = str(request.client.host), str(request.client.port)
     producer = AIOKafkaProducer(loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
     try:
         await producer.start()
@@ -35,7 +35,7 @@ async def transaction(message: Data, request: Request, background: BackgroundTas
         conn.execute(transactions.insert(json_value.__dict__))
     finally:
         await producer.stop()
-    background.add_task(backgroundtask, message.id, client_ip, client_host)
+    background.add_task(backgroundtask, message.id, client_host, client_port)
     return JSONResponse({"response": response}, 201)
 
 async def consume():
