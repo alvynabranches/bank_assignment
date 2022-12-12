@@ -32,24 +32,23 @@ async def consume():
         auto_offset_reset="earliest"
     )
     df = pd.DataFrame()
-    try:
-        # await consumer.start() # Only for AIOKafkaConsumer
-        async for msg in consumer:
-            df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
-            MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
-            EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
-            MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
-            conn.execute(transactions.insert().values(
-                **msg,
-                **{
-                    f"{config.TARGET_COL}_MA50": MA50,
-                    f"{config.TARGET_COL}_EMA50": EMA50,
-                    f"{config.TARGET_COL}_MA100": MA100
-                }
-            ))
-    finally:
-        # await consumer.stop() # Only for AIOKafkaConsumer
-        ...
+    # try:
+    #     await consumer.start() # Only for AIOKafkaConsumer
+    for msg in consumer:
+        df = pd.concat([df, pd.DataFrame(msg)], axis=0, ignore_index=True)
+        MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
+        EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
+        MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
+        conn.execute(transactions.insert().values(
+            **msg,
+            **{
+                f"{config.TARGET_COL}_MA50": MA50,
+                f"{config.TARGET_COL}_EMA50": EMA50,
+                f"{config.TARGET_COL}_MA100": MA100
+            }
+        ))
+    # finally:
+    #     await consumer.stop() # Only for AIOKafkaConsumer
 
 @app.post("/transaction")
 async def transaction(message: RejectedData, request: Request, background: BackgroundTasks):
@@ -58,14 +57,13 @@ async def transaction(message: RejectedData, request: Request, background: Backg
         # loop=config.loop, # Only for AIOKafkaProducer
         bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS
     )
-    try:
-        # await producer.start() # Only for AIOKafkaProducer
-        json_value = json.dumps(message.__dict__).encode("utf-8")
-        response = producer.send(topic=config.KAFKA_TOPIC, value=json_value)
-        conn.execute(transactions.insert(json_value.__dict__))
-    finally:
-        # await producer.stop() # Only for AIOKafkaProducer
-        ...
+    # try:
+    #     await producer.start() # Only for AIOKafkaProducer
+    json_value = json.dumps(message.__dict__).encode("utf-8")
+    response = producer.send(topic=config.KAFKA_TOPIC, value=json_value)
+    conn.execute(transactions.insert(json_value.__dict__))
+    # finally:
+    #     await producer.stop() # Only for AIOKafkaProducer
     background.add_task(backgroundtask, message.id, client_host, client_port)
     background.add_task(consume)
     return JSONResponse({"response": response}, 201)
