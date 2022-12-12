@@ -21,7 +21,9 @@ def backgroundtask(transaction_id: int, ip: str, port: str):
     ))
 
 @app.get("/")
-async def index():
+async def index(request: Request, background: BackgroundTasks):
+    client_host, client_port = str(request.client.host), str(request.client.port)
+    background.add_task(backgroundtask, 0, client_host, client_port, "transaction")
     return JSONResponse({"status": "success"}, 200)
 
 async def consume():
