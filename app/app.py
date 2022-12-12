@@ -3,7 +3,7 @@ import config
 import asyncio
 import pandas as pd
 from db import conn
-from schema import Data
+from schema import RejectedData
 from fastapi import FastAPI
 from models import transactions, transactions_information
 from fastapi.requests import Request
@@ -25,7 +25,7 @@ async def index():
     return JSONResponse({"status": "success"}, 200)
 
 @app.post("/transaction")
-async def transaction(message: Data, request: Request, background: BackgroundTasks):
+async def transaction(message: RejectedData, request: Request, background: BackgroundTasks):
     client_host, client_port = str(request.client.host), str(request.client.port)
     producer = AIOKafkaProducer(loop=config.loop, bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS)
     try:
@@ -45,11 +45,16 @@ async def consume():
         await consumer.start()
         async for msg in consumer:
             df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
-            MA50 = df[config.ANNUAL_INC_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
-            MA100 = df[config.ANNUAL_INC_COL].rolling(100).mean().tolist()[-1]
+            MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
+            EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
+            MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
             conn.execute(transactions.insert().values(
-                **msg, 
-                **{f"{config.ANNUAL_INC_COL}_MA50": MA50, f"{config.ANNUAL_INC_COL}_MA100": MA100}
+                **msg,
+                **{
+                    f"{config.TARGET_COL}_MA50": MA50,
+                    f"{config.TARGET_COL}_EMA50": EMA50,
+                    f"{config.TARGET_COL}_MA100": MA100
+                }
             ))
     finally:
         await consumer.stop()

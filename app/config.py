@@ -3,7 +3,7 @@ import asyncio
 
 KAFKA_TOPIC = "messages"
 
-ANNUAL_INC_COL = "annual_inc"
+ANNUAL_INC_COL = "Risk_Score"
 loop = asyncio.get_event_loop()
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "db")
