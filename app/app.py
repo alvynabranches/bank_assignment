@@ -64,7 +64,7 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     conn.execute(transactions.insert(json_value.__dict__))
     # finally:
     #     await producer.stop() # Only for AIOKafkaProducer
-    background.add_task(backgroundtask, message.id, client_host, client_port)
+    background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
     return JSONResponse({"response": response}, 201)
 
