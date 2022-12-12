@@ -20,3 +20,4 @@ for d in data:
     res = requests.post(f"http://{host}:5000/transaction", data=json.dumps(data))
     print(res)
     input()
+    
