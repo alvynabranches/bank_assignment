@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 host = "localhost"
-path = "/home/alvynabranches/Downloads"
+path = "."
 df = pd.read_csv(f"{path}/rejected_2007_to_2018Q4.csv")
 data = df.to_dict("records")
 for d in data:
