@@ -14,9 +14,9 @@ services:
   
   kafka:
     image: bitnami/kafka:2.8.0
+    hostname: kafka
     ports:
       - 9093:9093
-      - 9092:9092
     expose:
       - 9093
     environment:
@@ -71,7 +71,7 @@ services:
       MYSQL_PASSWORD: alvyn
       MYSQL_DATABASE: transaction_db
       DATABASE_URL: db
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
     volumes:
       - ./app:/app
     depends_on:
