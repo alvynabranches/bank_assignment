@@ -176,7 +176,8 @@ transactions_information = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("transaction_id", Integer),
     Column("client_ip", String(16)),
-    Column("client_host", String(16))
+    Column("client_host", String(16)),
+    Column("endpoint", String(16)),
 )
 
 meta.create_all()
