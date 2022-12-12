@@ -173,7 +173,7 @@ transactions = Table(
 
 transactions_information = Table(
     "transaction_information", meta,
-    Column("id", Integer, primarykey=True, autoincrement=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
     Column("transaction_id", Integer),
     Column("client_ip", String(16)),
     Column("client_host", String(16))
