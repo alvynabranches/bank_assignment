@@ -179,4 +179,5 @@ transactions_information = Table(
     Column("client_host", String(16))
 )
 
+transactions.create()
 meta.create_all()
