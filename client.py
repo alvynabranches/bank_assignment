@@ -2,6 +2,7 @@ import json
 import requests
 import pandas as pd
 
+host = "localhost"
 path = "/home/alvynabranches/Downloads"
 df = pd.read_csv(f"{path}/rejected_2007_to_2018Q4.csv")
 data = df.to_dict("records")
@@ -16,6 +17,6 @@ for d in data:
     data["state"] = d["State"]
     data["employment_length"] = d["Employment Length"]
     data["policy_code"] = d["Policy Code"]
-    res = requests.post("http://localhost:5000/transaction", data=json.dumps(data))
+    res = requests.post(f"http://{host}:5000/transaction", data=json.dumps(data))
     print(res)
     input()
