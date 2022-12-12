@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 
 host = "localhost"
+port = 5000
 path = "."
 df = pd.read_csv(f"{path}/rejected_2007_to_2018Q4.csv")
 print("Done Loading Document")
@@ -19,6 +20,6 @@ for d in data:
     data["state"] = d["State"]
     data["employment_length"] = d["Employment Length"]
     data["policy_code"] = d["Policy Code"]
-    res = requests.post(f"http://{host}:5000/transaction", data=json.dumps(data))
+    res = requests.post(f"http://{host}:{port}/transaction", data=json.dumps(data))
     print(res)
     
