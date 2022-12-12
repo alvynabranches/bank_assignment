@@ -7,3 +7,4 @@ engine = create_engine(conn_url)
 
 meta = MetaData()
 conn = engine.connect()
+meta.bind = engine
