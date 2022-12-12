@@ -47,6 +47,7 @@ services:
   
   db:
     image: mysql:8.0.31
+    hostname: db
     restart: always
     ports:
       - 3306:3306
