@@ -26,14 +26,14 @@ async def index():
 
 async def consume():
     consumer = KafkaConsumer(
-        config.KAFKA_TOPIC, 
-        # loop=config.loop, 
-        bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS, 
+        config.KAFKA_TOPIC,
+        # loop=config.loop, # Only for AIOKafkaConsumer
+        bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS,
         auto_offset_reset="earliest"
     )
     df = pd.DataFrame()
     try:
-        # await consumer.start()
+        # await consumer.start() # Only for AIOKafkaConsumer
         async for msg in consumer:
             df = pd.concat([df, pd.DataFrame(await msg)], axis=0, ignore_index=True)
             MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
@@ -48,26 +48,26 @@ async def consume():
                 }
             ))
     finally:
-        # await consumer.stop()
+        # await consumer.stop() # Only for AIOKafkaConsumer
         ...
 
 @app.post("/transaction")
 async def transaction(message: RejectedData, request: Request, background: BackgroundTasks):
     client_host, client_port = str(request.client.host), str(request.client.port)
     producer = KafkaProducer(
-        # loop=config.loop, 
+        # loop=config.loop, # Only for AIOKafkaProducer
         bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS
     )
     try:
-        # await producer.start()
+        # await producer.start() # Only for AIOKafkaProducer
         json_value = json.dumps(message.__dict__).encode("utf-8")
         response = producer.send(topic=config.KAFKA_TOPIC, value=json_value)
         conn.execute(transactions.insert(json_value.__dict__))
     finally:
-        # await producer.stop()
+        # await producer.stop() # Only for AIOKafkaProducer
         ...
     background.add_task(backgroundtask, message.id, client_host, client_port)
     background.add_task(consume)
     return JSONResponse({"response": response}, 201)
 
-# asyncio.create_task(consume())
+# asyncio.create_task(consume()) # Only for aiokafka module
