@@ -75,3 +75,29 @@ services:
     depends_on:
       - kafka
       - db
+
+  # auth_app:
+  #   build:
+  #     context: ./auth
+  #     dockerfile: Dockerfile
+  #   restart: on-failure
+  #   ports:
+  #     - 5000:5000
+  #   environment:
+  #     POSTGRES_USERNAME: root
+  #     POSTGRES_PASSWORD: alvyn
+  #     POSTGRES_DATABASE: users_db
+  #     DATABASE_URL: auth_db
+  #   volumes:
+  #     - ./app:/app
+  #   depends_on:
+  #     - auth_db
+
+  # auth_db:
+  #   image: postgres:15.1
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     POSTGRES_USERNAME: root
+  #     POSTGRES_PASSWORD: alvyn
+  #     POSTGRES_DATABASE: users_db
