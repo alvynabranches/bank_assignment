@@ -10,8 +10,10 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.background import BackgroundTasks
 from kafka import KafkaProducer, KafkaConsumer
+from logging import getLogger
 
 app = FastAPI()
+logger = getLogger(__name__)
 
 def backgroundtask(transaction_id: int, ip: str, port: str, endpoint: str):
     conn.execute(transactions_information.insert().values(
@@ -52,6 +54,7 @@ async def consume():
             ))
     except Exception as e:
         print(e)
+        logger.error(e)
     # finally:
     #     await consumer.stop() # Only for AIOKafkaConsumer
 
@@ -91,6 +94,7 @@ async def transaction(message: RejectedData, request: Request, background: Backg
         conn.execute(transactions.insert(message.__dict__))
     except Exception as e:
         print(e)
+        logger.error(e)
     # finally:
     #     await producer.stop() # Only for AIOKafkaProducer
     # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
