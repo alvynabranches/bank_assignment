@@ -1,5 +1,6 @@
 from sqlalchemy import Table, Column, Integer, String, Float, Date, DateTime
 from db import meta
+import config
 
 # transactions = Table(
 #     "transactions", meta, 
@@ -168,7 +169,10 @@ transactions = Table(
     Column("zip_code", String(16)),
     Column("state", String(8)),
     Column("employment_length", String(32)),
-    Column("policy_code", Float)
+    Column("policy_code", Float),
+    Column(f"{config.TARGET_COL}_MA50", Float),
+    Column(f"{config.TARGET_COL}_EMA50", Float),
+    Column(f"{config.TARGET_COL}_MA100", Float),
 )
 
 transactions_information = Table(
