@@ -2,7 +2,7 @@ import json
 import config
 import asyncio
 import pandas as pd
-from db import conn
+from db import conn, engine
 from schema import RejectedData
 from fastapi import FastAPI
 from models import transactions, transactions_information
@@ -60,7 +60,8 @@ async def consume():
 	
 
 def back(new_data: dict):
-    all_transactions = transactions.all()
+    all_transactions = conn.execute(transactions)
+    df = pd.read_sql("select * from transactions;", con=engine)
     df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
     MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
     EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
