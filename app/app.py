@@ -1,6 +1,7 @@
 import json
 import config
 import asyncio
+import numpy as np
 import pandas as pd
 from db import conn, engine
 from schema import RejectedData
@@ -71,9 +72,9 @@ async def back(new_data: dict):
     conn.execute(transactions.insert().values(
         **new_data, 
         **{
-            f"{config.TARGET_COL}_MA50": MA50,
-            f"{config.TARGET_COL}_EMA50": EMA50,
-            f"{config.TARGET_COL}_MA100": MA100
+            f"{config.TARGET_COL}_MA50": MA50 if MA50 is not np.nan else None,
+            f"{config.TARGET_COL}_EMA50": EMA50 if EMA50 is not np.nan else None,
+            f"{config.TARGET_COL}_MA100": MA100 if MA100 is not np.nan else None
         }
     ))
     
