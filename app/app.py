@@ -59,7 +59,7 @@ async def consume():
     #     await consumer.stop() # Only for AIOKafkaConsumer
 	
 
-def back(new_data: dict):
+async def back(new_data: dict):
     all_transactions = conn.execute(transactions)
     df = pd.read_sql("select * from transactions;", con=engine)
     df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
@@ -95,7 +95,7 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     #     await producer.stop() # Only for AIOKafkaProducer
     # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
-    back(message.__dict__)
+    await back(message.__dict__)
     return JSONResponse({"status": "created"}, 201)
 
 # asyncio.create_task(consume()) # Only for aiokafka module
