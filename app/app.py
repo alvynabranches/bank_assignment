@@ -60,6 +60,7 @@ async def consume():
 	
 
 async def back(new_data: dict):
+    print(new_data)
     # all_transactions = conn.execute(transactions)
     # df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
     df = pd.read_sql("select * from transactions;", con=engine)
