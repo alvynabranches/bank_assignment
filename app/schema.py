@@ -8,7 +8,7 @@ class ApplicationType(Enum):
     joint = "Joint App"
 
 class AcceptedData(BaseModel):
-    id: int
+    id: Optional[int] = None
     member_id: Optional[int]
     loan_amnt: int
     funded_amnt: int
@@ -160,7 +160,7 @@ class AcceptedData(BaseModel):
     settlement_term: Optional[float] = None
 
 class RejectedData(BaseModel):
-    id: int = None
+    id: Optional[int] = None
     amount_requested: float
     application_date: str
     loan_title: str
