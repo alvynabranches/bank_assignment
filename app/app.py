@@ -60,9 +60,10 @@ async def consume():
 	
 
 async def back(new_data: dict):
-    all_transactions = conn.execute(transactions)
+    # all_transactions = conn.execute(transactions)
+    # df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
     df = pd.read_sql("select * from transactions;", con=engine)
-    df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
+    df = pd.concat([df, pd.DataFrame(new_data)], axis=0, ignore_index=True)
     MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
     EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
     MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
