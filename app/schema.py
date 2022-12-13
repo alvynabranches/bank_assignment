@@ -162,7 +162,7 @@ class AcceptedData(BaseModel):
 class RejectedData(BaseModel):
     id: int = None
     amount_requested: float
-    application_date: datetime
+    application_date: str
     loan_title: str
     risk_score: float
     debt_to_income_ratio: str

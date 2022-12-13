@@ -161,7 +161,7 @@ transactions = Table(
     "transactions", meta,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("amount_requested", Float),
-    Column("application_date", Date),
+    Column("application_date", String),
     Column("loan_title", String(128)),
     Column("risk_score", Float),
     Column("debt_to_income_ratio", String(16)),
