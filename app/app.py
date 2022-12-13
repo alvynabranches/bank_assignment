@@ -24,7 +24,7 @@ def backgroundtask(transaction_id: int, ip: str, port: str, endpoint: str):
 @app.get("/")
 async def index(request: Request, background: BackgroundTasks):
     client_host, client_port = str(request.client.host), str(request.client.port)
-    background.add_task(backgroundtask, 0, client_host, client_port, "transaction")
+    # background.add_task(backgroundtask, 0, client_host, client_port, "transaction")
     return JSONResponse({"status": "success"}, 200)
 
 async def consume():
@@ -64,10 +64,10 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     #     await producer.start() # Only for AIOKafkaProducer
     json_value = json.dumps(message.__dict__).encode("utf-8")
     response = producer.send(topic=config.KAFKA_TOPIC, value=json_value)
-    conn.execute(transactions.insert(json_value.__dict__))
+    conn.execute(transactions.insert(message.__dict__))
     # finally:
     #     await producer.stop() # Only for AIOKafkaProducer
-    background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
+    # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
     return JSONResponse({"response": response}, 201)
 
