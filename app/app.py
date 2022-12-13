@@ -57,14 +57,9 @@ async def consume():
         logger.error(e)
     # finally:
     #     await consumer.stop() # Only for AIOKafkaConsumer
-
-async def back(new_data: dict):
-	all_transactions = transactions.all()
-	df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
-	df = pd.concat([df, pd.DataFrame(new_data)], axis=0, ignore_index=True)
 	
 
-async def back(new_data: dict):
+def back(new_data: dict):
     all_transactions = transactions.all()
     df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
     MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
@@ -99,7 +94,19 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     #     await producer.stop() # Only for AIOKafkaProducer
     # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
-    back(message.__dict__)
+    all_transactions = transactions.all()
+    df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
+    MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
+    EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
+    MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
+    conn.execute(transactions.insert().values(
+        **message.__dict__, 
+        **{
+            f"{config.TARGET_COL}_MA50": MA50, 
+            f"{config.TARGET_COL}_EMA50": EMA50, 
+            f"{config.TARGET_COL}_MA100": MA100
+        }
+    ))
     return JSONResponse({"status": "created"}, 201)
 
 # asyncio.create_task(consume()) # Only for aiokafka module
