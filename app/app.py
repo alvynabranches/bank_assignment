@@ -95,7 +95,7 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     #     await producer.stop() # Only for AIOKafkaProducer
     # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
-    background.add_task(back, message.__dict__)
+    back(message.__dict__)
     return JSONResponse({"response": response}, 201)
 
 # asyncio.create_task(consume()) # Only for aiokafka module
