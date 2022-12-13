@@ -96,6 +96,6 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
     back(message.__dict__)
-    return JSONResponse({"response": response}, 201)
+    return JSONResponse({"status": "created"}, 201)
 
 # asyncio.create_task(consume()) # Only for aiokafka module
