@@ -13,11 +13,12 @@ from kafka import KafkaProducer, KafkaConsumer
 
 app = FastAPI()
 
-def backgroundtask(transaction_id: int, ip: str, port: str):
+def backgroundtask(transaction_id: int, ip: str, port: str, endpoint: str):
     conn.execute(transactions_information.insert().values(
         transaction_id=transaction_id,
         ip=ip,
-        port=port
+        port=port,
+        endpoint=endpoint
     ))
 
 @app.get("/")
