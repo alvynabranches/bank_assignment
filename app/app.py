@@ -86,7 +86,7 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     try:
         # await producer.start() # Only for AIOKafkaProducer
         json_value = json.dumps(message.__dict__).encode("utf-8")
-        response = producer.send(topic=config.KAFKA_TOPIC, value=json_value)
+        producer.send(topic=config.KAFKA_TOPIC, value=json_value)
         conn.execute(transactions.insert(message.__dict__))
     except Exception as e:
         print(e)
@@ -95,19 +95,7 @@ async def transaction(message: RejectedData, request: Request, background: Backg
     #     await producer.stop() # Only for AIOKafkaProducer
     # background.add_task(backgroundtask, message.id, client_host, client_port, "transaction")
     background.add_task(consume)
-    all_transactions = transactions.all()
-    df = pd.DataFrame(all_transactions, columns=["id", "amount_requested", "application_date", "loan_title", "risk_score", "debt_to_income_ratio", "zip_code", "state", "employment_length", "policy_code", f"{config.TARGET_COL}_MA50", f"{config.TARGET_COL}_EMA50", f"{config.TARGET_COL}_MA100"])
-    MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
-    EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
-    MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
-    conn.execute(transactions.insert().values(
-        **message.__dict__, 
-        **{
-            f"{config.TARGET_COL}_MA50": MA50, 
-            f"{config.TARGET_COL}_EMA50": EMA50, 
-            f"{config.TARGET_COL}_MA100": MA100
-        }
-    ))
+    back(message.__dict__)
     return JSONResponse({"status": "created"}, 201)
 
 # asyncio.create_task(consume()) # Only for aiokafka module
