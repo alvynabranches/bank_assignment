@@ -69,6 +69,7 @@ async def back(new_data: dict):
     MA50 = df[config.TARGET_COL].rolling(50).mean().tolist()[-1]
     EMA50 = df[config.TARGET_COL].ewm(span=50, adjust=False).mean().tolist()[-1]
     MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
+    print(type(MA50), type(EMA50), type(MA100))
     conn.execute(transactions.insert().values(
         **new_data, 
         **{
