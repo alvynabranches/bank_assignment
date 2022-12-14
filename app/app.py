@@ -1,4 +1,5 @@
 import json
+import math
 import config
 import asyncio
 import numpy as np
@@ -71,6 +72,7 @@ async def back(new_data: dict):
     MA100 = df[config.TARGET_COL].rolling(100).mean().tolist()[-1]
     print(type(MA50), type(EMA50), type(MA100))
     print(MA50, EMA50, MA100)
+    print(math.isnan(MA50), math.isnan(EMA50), math.isnan(MA100))
     print(MA50 is np.nan, EMA50 is np.nan, MA100 is np.nan)
     print(MA50 != np.nan, EMA50 != np.nan, MA100 != np.nan)
     print(MA50 == float("nan"), EMA50 == float("nan"), MA100 == float("nan"))
