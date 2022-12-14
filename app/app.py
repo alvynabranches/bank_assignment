@@ -79,9 +79,9 @@ async def back(new_data: dict):
     conn.execute(transactions.insert().values(
         **new_data, 
         **{
-            f"{config.TARGET_COL}_MA50": MA50 if MA50 != np.nan else None,
-            f"{config.TARGET_COL}_EMA50": EMA50 if EMA50 != np.nan else None,
-            f"{config.TARGET_COL}_MA100": MA100 if MA100 != np.nan else None
+            f"{config.TARGET_COL}_MA50": None if math.isnan(MA50) else MA50,
+            f"{config.TARGET_COL}_EMA50": None if math.isnan(EMA50) else EMA50,
+            f"{config.TARGET_COL}_MA100": None if math.isnan(MA100) else MA100
         }
     ))
     
