@@ -5,14 +5,15 @@ import asyncio
 import numpy as np
 import pandas as pd
 from db import conn, engine
-from schema import RejectedData
 from fastapi import FastAPI
-from models import transactions, transactions_information
+from logging import getLogger
+from datetime import datetime as dt
+from schema import RejectedData
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.background import BackgroundTasks
 from kafka import KafkaProducer, KafkaConsumer
-from logging import getLogger
+from models import transactions, transactions_information
 
 app = FastAPI()
 logger = getLogger(__name__)
@@ -22,13 +23,14 @@ def backgroundtask(transaction_id: int, ip: str, port: str, endpoint: str):
         transaction_id=transaction_id,
         ip=ip,
         port=port,
-        endpoint=endpoint
+        endpoint=endpoint,
+        datetime=str(dt.now()),
     ))
 
 @app.get("/")
 async def index(request: Request, background: BackgroundTasks):
     client_host, client_port = str(request.client.host), str(request.client.port)
-    # background.add_task(backgroundtask, 0, client_host, client_port, "transaction")
+    # background.add_task(backgroundtask, 0, client_host, client_port, "")
     return JSONResponse({"status": "success"}, 200)
 
 async def consume():

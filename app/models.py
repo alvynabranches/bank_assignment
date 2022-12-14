@@ -182,6 +182,7 @@ transactions_information = Table(
     Column("client_ip", String(16)),
     Column("client_host", String(16)),
     Column("endpoint", String(16)),
+    Column("datetime", String(32)),
 )
 
 meta.create_all()
