@@ -1,0 +1,25 @@
+sudo apt install gnome-terminal
+sudo apt install apt-transport-https ca-certificates curl software-properties-common wget -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu `lsb_release -cs` test"
+sudo apt update
+sudo apt install docker-ce -y
+sudo apt update
+wget https://desktop.docker.com/linux/main/amd64/docker-desktop-4.15.0-amd64.deb
+sudo apt install ./docker-desktop-4.15.0-amd64.deb -y
+sudo apt update
+sudo apt upgrade -y
+
+
+systemctl --user enable docker-desktop
+
+---
+sudo apt install python3-pip htop -y
+pip install pandas requests
+gsutil cp gs://accepted2007/rejected_2007_to_2018Q4.csv .
+python3 client.py
+
+
+---
+sudo docker exec -it bank_assignment-db-1 mysql transaction_db -p
+data/0000000000.json

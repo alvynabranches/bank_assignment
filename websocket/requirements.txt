@@ -1,0 +1,8 @@
+fastapi
+pymysql
+sqlalchemy
+cryptography
+strawberry-graphql[fastapi]
+uvicorn[standard]
+aiokafka
+pandas
